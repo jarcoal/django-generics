@@ -1,4 +1,5 @@
-from django.views.generic import UpdateView
+from django.views.generic import UpdateView, FormView
+from django.forms.formsets import formset_factory
 
 
 class UpsertView(UpdateView):
@@ -67,3 +68,51 @@ class UpsertView(UpdateView):
 		
 		#Return the response
 		return response if response else HttpResponseRedirect(self.get_success_url())
+		
+			
+
+class FormsetView(FormView):
+	"""
+	Handles a view that needs to operate on a formset.
+	"""
+
+	extra = 3
+	can_order = False
+	can_delete = False
+	max_num = None
+
+	def get_formset(self, form_class):
+		"""
+		Converts a form class into a formset.
+		"""
+		return formset_factory(form_class, **self.get_formset_kwargs())
+
+
+	def get_form(self, form_class):
+		"""
+		Returns a formset.
+		"""
+		return self.get_formset(form_class)
+
+
+	def get_formset_kwargs(self):
+		"""
+		Returns the kwargs used to instantiate the formset.
+		"""
+	
+		#Call Django's form kwarg populator
+		kwargs = self.get_form_kwargs()	
+		
+		#Remove the initial variable, it isn't used for formsets
+		del kwargs['initial']
+		
+		#Add in any configured variables
+		kwargs.update({
+			'extra': self.extra,
+			'can_order': self.can_order,
+			'can_delete': self.can_delete,
+			'max_num': self.max_num,
+		})
+		
+		#Gone
+		return kwargs
