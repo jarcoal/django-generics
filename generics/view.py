@@ -122,3 +122,51 @@ class FormsetView(FormView):
 		
 		#Gone
 		return kwargs
+
+
+
+class InlineFormsetView(FormsetView):
+	"""
+	Handles a view that needs to operate on an inline formset.
+	"""
+
+	parent_model = None
+	model = None
+	
+	fields = None
+	excludes = None
+	fk_name = None
+
+	def get(self, *a, **k):
+		"""
+		Creates a formset and adds it to the context to be rendered.
+		"""
+		formset = self.get_formset()
+		return self.render_to_response(self.get_context_data(form=formset))
+
+	def post(self, *a, **k):
+		"""
+		Validates a formset, and calls the appropriate handler.
+		"""
+		formset = self.get_formset()
+		return self.form_valid(formset) if formset.is_valid() else self.form_invalid(formset)
+	
+	def get_formset(self):
+		"""
+		Returns an inline formset.
+		"""
+		return inlineformset_factory(self.parent_model, self.model, **self.get_formset_kwargs())
+
+	def get_formset_kwargs(self):
+		"""
+		Returns the kwargs used to instatiate the formset.
+		"""
+		kwargs = super(InlineFormsetView, self).get_formset_kwargs()
+		
+		kwargs.update({
+			'fields': self.fields,
+			'excludes': self.excludes,
+			'fk_name': self.fk_name,
+		})
+		
+		return kwargs
