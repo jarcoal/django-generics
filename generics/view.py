@@ -80,6 +80,15 @@ class FormsetView(FormView):
 	can_order = False
 	can_delete = False
 	max_num = None
+	
+	initial = []
+
+	def get_initial(self):
+		"""
+		Returns the initial data to input into the formset.
+		"""
+		return self.initial
+
 
 	def get_formset(self, form_class):
 		"""
@@ -101,10 +110,7 @@ class FormsetView(FormView):
 		"""
 	
 		#Call Django's form kwarg populator
-		kwargs = self.get_form_kwargs()	
-		
-		#Remove the initial variable, it isn't used for formsets
-		del kwargs['initial']
+		kwargs = self.get_form_kwargs()
 		
 		#Add in any configured variables
 		kwargs.update({
