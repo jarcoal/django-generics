@@ -10,24 +10,6 @@ class UpsertView(UpdateView):
 	This is useful for forms that use the same template for updating or creating a model object.
 	"""
 
-	def post(self, *a, **k):
-		"""
-		If a POST variable "delete" is submitted, the model object will be deleted.
-		If you have a delete button in your form somewhere, just give it `name="delete"`.
-		"""
-	
-		#Not marked for deletion
-		if 'delete' not in self.request.POST:
-			return super(UpsertView, self).post(*a, **k)
-		
-		#Delete the object
-		self.object = self.get_object()
-		self.object.delete()
-		
-		#Redirect to Delete URL
-		return HttpResponseRedirect(self.get_delete_url())
-
-	
 	def get_object(self):
 		"""
 		Attempts to get a model object.  If one is found, we are updating an existing model object, otherwise, we are creating one.
