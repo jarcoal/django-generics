@@ -136,25 +136,35 @@ class InlineFormsetView(FormsetView):
 	exclude = None
 	fk_name = None
 
+
 	def get(self, *a, **k):
 		"""
 		Creates a formset and adds it to the context to be rendered.
 		"""
-		formset = self.get_formset()
-		return self.render_to_response(self.get_context_data(form=formset))
+		formset_class = self.get_formset_class()
+		form = self.get_form(formset_class)
+		return self.render_to_response(self.get_context_data(form=form))
+
 
 	def post(self, *a, **k):
 		"""
 		Validates a formset, and calls the appropriate handler.
 		"""
-		formset = self.get_formset()
-		return self.form_valid(formset) if formset.is_valid() else self.form_invalid(formset)
+		formset_class = self.get_formset_class()
+		form = self.get_form(formset_class)
+		return self.form_valid(form) if form.is_valid() else self.form_invalid(form)
+
 	
-	def get_formset(self):
+	def get_formset_class(self):
 		"""
 		Returns an inline formset.
 		"""
 		return inlineformset_factory(self.parent_model, self.model, **self.get_formset_kwargs())
+
+
+	def get_form(self, form_class):
+		return form_class(**self.get_form_kwargs())
+
 
 	def get_formset_kwargs(self):
 		"""
@@ -168,4 +178,13 @@ class InlineFormsetView(FormsetView):
 			'fk_name': self.fk_name,
 		})
 		
+		return kwargs
+	
+	
+	def get_form_kwargs(self, *a, **k):
+		"""
+		Injects the instance variable into the form kwargs
+		"""
+		kwargs = super(InlineFormsetView, self).get_form_kwargs(*a, **k)
+		kwargs['instance'] = self.get_object()
 		return kwargs
