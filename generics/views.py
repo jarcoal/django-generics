@@ -133,7 +133,7 @@ class InlineFormsetView(FormsetView):
 	model = None
 	
 	fields = None
-	excludes = None
+	exclude = None
 	fk_name = None
 
 	def get(self, *a, **k):
@@ -164,7 +164,7 @@ class InlineFormsetView(FormsetView):
 		
 		kwargs.update({
 			'fields': self.fields,
-			'excludes': self.excludes,
+			'exclude': self.exclude,
 			'fk_name': self.fk_name,
 		})
 		
