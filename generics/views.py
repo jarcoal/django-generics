@@ -91,24 +91,12 @@ class FormsetView(FormView):
 		return self.initial
 
 
-	def get_formset_class(self, form_class):
+	def get_form_class(self):
 		"""
-		Converts a form class into a formset.
+		Converts a form class into a formset class.
 		"""
+		form_class = super(FormsetView, self).get_form_class()
 		return formset_factory(form_class, **self.get_formset_kwargs())
-
-
-	def get_form(self, form_class):
-		"""
-		Returns a formset.
-		"""
-		
-		#convert the form into a formset class
-		formset_class = self.get_formset_class(form_class)
-		
-		#instatiate the formset with form parameters
-		return formset_class(**self.get_form_kwargs())
-		
 
 
 	def get_formset_kwargs(self):
