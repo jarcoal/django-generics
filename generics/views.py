@@ -90,7 +90,7 @@ class FormsetView(FormView):
 		return self.initial
 
 
-	def get_formset(self, form_class):
+	def get_formset_class(self, form_class):
 		"""
 		Converts a form class into a formset.
 		"""
@@ -101,27 +101,25 @@ class FormsetView(FormView):
 		"""
 		Returns a formset.
 		"""
-		return self.get_formset(form_class)
+		
+		#convert the form into a formset class
+		formset_class = self.get_formset_class(form_class)
+		
+		#instatiate the formset with form parameters
+		return formset_class(**self.get_form_kwargs())
+		
 
 
 	def get_formset_kwargs(self):
 		"""
-		Returns the kwargs used to instantiate the formset.
+		Returns the kwargs used to create the formset class.
 		"""
-	
-		#Call Django's form kwarg populator
-		kwargs = self.get_form_kwargs()
-		
-		#Add in any configured variables
-		kwargs.update({
+		return {
 			'extra': self.extra,
 			'can_order': self.can_order,
 			'can_delete': self.can_delete,
-			'max_num': self.max_num,
-		})
-		
-		#Gone
-		return kwargs
+			'max_num': self.max_num,		
+		}
 
 
 
