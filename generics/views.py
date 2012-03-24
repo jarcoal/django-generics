@@ -1,5 +1,6 @@
 from django.views.generic import UpdateView, FormView
 from django.forms.formsets import formset_factory
+from django.forms.models import inlineformset_factory
 
 
 class UpsertView(UpdateView):
