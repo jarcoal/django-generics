@@ -3,6 +3,7 @@ from django.views.generic.base import TemplateResponseMixin
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
 from generics.mixins import FormsetMixin, InlineFormsetMixin
 
+from django.http import HttpResponseRedirect
 
 class BaseFormsetView(FormsetMixin, ProcessFormView):
 	"""
@@ -20,6 +21,11 @@ class BaseInlineFormsetUpdateView(InlineFormsetMixin, BaseUpdateView):
 	"""
 	A base view for updating a model's related objects.
 	"""
+	
+	def form_valid(self, form):
+		self.formset = form.save()
+		self.object = self.get_object()
+		return HttpResponseRedirect(self.get_success_url())
 
 
 class InlineFormsetUpdateView(SingleObjectTemplateResponseMixin, BaseInlineFormsetUpdateView):
